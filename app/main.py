@@ -1,12 +1,14 @@
 from fastapi import FastAPI, UploadFile, File
-
 from app.parser import extract_endpoints
+from app.ai_service import generate_docs
 
 app = FastAPI(title="AI API Doc Generator")
 
 @app.get("/")
 def home():
     return {"message": "AI API Doc Generator is running"}
+
+
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
@@ -15,7 +17,9 @@ async def upload_file(file: UploadFile = File(...)):
 
     endpoints = extract_endpoints(text)
 
+    docs = generate_docs(endpoints)
+
     return {
         "filename": file.filename,
-        "endpoints": endpoints
+        "ai_documentation": docs
     }
